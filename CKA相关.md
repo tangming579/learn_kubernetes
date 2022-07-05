@@ -1,4 +1,4 @@
-# 使用 RBAC 鉴权
+# 1. 使用 RBAC 鉴权
 
 https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/
 
@@ -33,7 +33,7 @@ kubectl create rolebinding bob-admin-binding --clusterrole=admin --user=bob --na
 kubectl create clusterrolebinding root-cluster-admin-binding --clusterrole=cluster-admin --user=root
 ```
 
-# 节点控制
+# 2. 节点控制
 
 https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#cordon
 
@@ -52,11 +52,11 @@ kubectl uncordon NODE
 - cordon：影响最小，只会将node调为SchedulingDisabled，之后再发创建pod，不会被调度到该节点
 - drain：驱逐node上的pod，其他节点重新创建，接着，将节点调为 SchedulingDisabled
 
-# 升级集群
+# 3. 升级集群
 
 https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
 
-# NetworkPolicy
+# 4. NetworkPolicy
 
 在 IP 地址或端口层面（OSI 第 3 层或第 4 层）控制网络流量
 
@@ -113,5 +113,23 @@ spec:
       ports:
         - protocol: TCP
           port: 5978
+```
+
+# 5. Pod 部署到指定节点
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-kusc00401
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    disk: spinning
 ```
 
