@@ -31,3 +31,16 @@ kubectl create rolebinding bob-admin-binding --clusterrole=admin --user=bob --na
 kubectl create clusterrolebinding root-cluster-admin-binding --clusterrole=cluster-admin --user=root
 ```
 
+# 节点控制
+
+## cordon
+
+设置节点为不可调度
+
+```
+$ kubectl drain NODE
+```
+
+
+
+## drain
