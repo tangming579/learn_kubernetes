@@ -133,3 +133,49 @@ spec:
     disk: spinning
 ```
 
+# 6. 获取 Pod 节点健康数
+
+获取健康节点数，不包含标记污点的节点 （NoSchedule）
+
+```
+# grep -v -i noschedule 过滤掉不可调度的节点(根据题意要求)
+# grep -v -i noexecute 过滤掉 NotReady 的节点
+kubectl describe node | grep -i taints | grep -v -i noschedule | grep -v -i noexecute
+echo $num > /opt/KUSC00402/kusc00402.txt # 节点健康数量写入到文件
+
+----------------------------------------------------------
+kubectl get node | grep NotReady # 查看 NotReady 的节点
+```
+
+# 7. 创建多个 container 的 Pod
+
+创建一个Pod，名字为kucc1，这个Pod可能包含1-4容器，该题为四个：nginx+redis+memcached+consul
+
+```
+# 快速获取 Pod yaml
+kubectl run kucc1 --restart=Never --image=nginx --dry-run=client -oyaml > multi-container.yaml
+# 编辑 yaml 增加其它容器
+vi  multi-container.yaml
+# 创建 pod
+kubectl apply -f  multi-container.yaml
+```
+
+yaml：
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-container
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+  - image: redis
+    name: redis
+  - image: memcached
+    name: memcached
+  - image: consul
+    name: consul
+```
+
