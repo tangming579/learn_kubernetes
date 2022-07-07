@@ -179,3 +179,82 @@ spec:
     name: consul
 ```
 
+# 8. 创建 PV (Persistent Volume)
+
+在Kubenetes中，为了能够屏蔽底层存储实现的细节，让用户方便使用及管理员方便管理，Kubernetes从1.0版本就已经引入了Persistent Volume(PV)和Persistent Volume Claim(PVC)
+
+- PV(持久卷)：是对存储资源的抽象，将存储定义为一种容器应用可以使用的资源，PV由管理员创建和配置，它与存储提供商的具体实现直接相关，例如：GlusterFS、iSCSI、RBD或GCE和AWS公有云提供的共享存储，通过插件式的机制进行管理，供应用访问和使用。除EmptyDir类型存储卷，PV的生命周期独立使用它的Pod。
+- PVC是用户对存储资源的一个申请。就像Pod消耗Node的资源一样，PVC消耗PV的资源。PVC可以申请存储空间的大小(Size)和访问模式(例如ReadWriteOnce、ReadOnlyMany或ReadWriteMany)。
+
+ 有了PV,为什么又设计了PVC？
+
+1. 职责分离，PVC中只用声明自己需要的存储size、access mode（单node独占还是多node共享？只读还是读写访问？）等业务真正关心的存储需求（不用关心存储实现细节），PV和其对应的后端存储信息则由交给cluster admin统一运维和管控，安全访问策略更容易控制。
+2. PVC简化了User对存储的需求，PV才是存储的实际信息的承载体，通过kube-controller-manager中的persistentVolumeController将PVC与合适的PV bound到一起，从而满足User 对存储的实际需求。
+3. PVC像是面向对对象编程中抽象出来的接口，PV是接口对应的实现。
+
+创建一个pv，名字为app-config，大小为2Gi，访问权限为ReadWriteMany。Volume的类型为hostPath，路径为/srv/app-config
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: app-config
+  labels:
+    type: local
+spec:
+  storageClassName: manual  #可以写也可以不写
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/srv/app-config"
+```
+
+# 9. PersistentVolumeClaim
+
+1. 创建一个名字为pv-volume的pvc，指定storageClass为csi-hostpath-sc，大小为10Mi
+2. 然后创建一个Pod，名字为web-server，镜像为nginx，并且挂载该PVC至/usr/share/nginx/html，挂载的权限为ReadWriteOnce
+3. 之后通过kubectl edit或者kubectl path将pvc改成70Mi，并且记录修改记录。
+
+``` yaml
+# 创建 pvc
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-volume
+spec:
+  storageClassName: csi-hostpath-sc
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Mi
+---
+# 创建 Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-server
+spec: 
+  volumes:
+  - name: pv-volume
+    persistentVolumeClaim:
+      claimName: pvc-volume
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - mountPath: "/usr/share/nginx/html"
+      name: pv-volume
+---
+# 编辑 pvc 容量，改为 70Mi
+kubectl edit pvc pv-volume  --record
+```
+
+# 10. 过滤 Pod 日志
+
+``` sh
+kubectl logs foobar | grep unable-to-access-website > /opt/KUTR00101/foobar
+```
+
