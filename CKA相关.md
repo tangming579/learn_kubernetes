@@ -348,3 +348,26 @@ kubectl expose deployment front-end --name=front-end-svc --port=80 --target-port
 
 ```
 
+# 16. 创建Ingress
+
+创建 Ingress 资源，名称 pong , Namespace ing-internal，公开 hi 服务在 path 为 /hi ，使用服务的 5678 端口
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pong
+  namespace: ing-internal
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /hi
+        pathType: Prefix
+        backend:
+          service:
+            name: hi
+            port:
+              number: 5678
+```
+
