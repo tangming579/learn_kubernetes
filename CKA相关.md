@@ -21,8 +21,6 @@ RBAC API 声明了四种 Kubernetes 对象：
 
 
 
-## 常用命令
-
 ```shell
 kubectl create role pod-reader --verb=get,list,watch --resource=pods --namespace=acme
 
@@ -33,11 +31,9 @@ kubectl create rolebinding bob-admin-binding --clusterrole=admin --user=bob --na
 kubectl create clusterrolebinding root-cluster-admin-binding --clusterrole=cluster-admin --user=root
 ```
 
-# 2. 节点控制
+# 2. 节点控制（cordon、drain）
 
 https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#cordon
-
-## cordon、drain
 
 ```
 kubectl cordon NODE
@@ -256,5 +252,28 @@ kubectl edit pvc pv-volume  --record
 
 ``` sh
 kubectl logs foobar | grep unable-to-access-website > /opt/KUTR00101/foobar
+```
+
+# 11. 添加 sidecar container
+
+Sidecar 模式就是指在原来的业务逻辑上再新加一个抽象层，Sidecar作为一种模式并不是Kubernetes的正式约定。
+
+``` sh
+kubectl get po legacy-app -oyaml > c-sidecar.yaml
+```
+
+# 12. CPU 使用率最高的 Pod
+
+找出具有name=cpu-user的Pod，并过滤出使用CPU最高的Pod，然后把它的名字写在已经存在的/opt/KUTR00401/KUTR00401.txt文件里（注意他没有说指定namespace。所以需要使用-A指定所以namespace）
+
+```sh
+$ kubectl config use-context k8s
+$ kubectl top pod -A -l name=cpu-user
+NAMESPACE     NAME                       CPU(cores)   MEMORY(bytes)   
+kube-system   coredns-54d67798b7-hl8xc   7m           8Mi             
+kube-system   coredns-54d67798b7-m4m2q   6m           8Mi
+# 注意这里的pod名字以实际名字为准，按照CPU那一列进行选择一个最大的Pod，另外如果CPU的数值是1 2 3这样的。是大于带m这样的，因为1颗CPU等于1000m，注意要用>>而不是>
+
+$ echo "coredns-54d67798b7-hl8xc" >> /opt/KUTR00401/KUTR00401.txt
 ```
 
