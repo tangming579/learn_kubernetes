@@ -277,3 +277,74 @@ kube-system   coredns-54d67798b7-m4m2q   6m           8Mi
 $ echo "coredns-54d67798b7-hl8xc" >> /opt/KUTR00401/KUTR00401.txt
 ```
 
+# 13. 集群故障排查
+
+一个名为wk8s-node-0的节点状态为NotReady，让其他恢复至正常状态，并确认所有的更改开机自动完成
+
+```  sh
+# 连接到节点
+ssh wk8s-node-0
+# 获取 root 权限
+sudo -i
+# 查看 kubelet 运行状态
+systemctl status kubelet
+# 非正常 running 状态，启动
+systemctl start kubelet
+# 设置开机自启
+systemctl enable kubelet
+```
+
+# 14. 备份还原 etcd
+
+1. 为运行在 https://127.0.0.1:2379 上的现有 etcd 实例创建快照并且将快照保存到 /etc/data/etcd-snapshot.db
+
+2. 还原  /var/lib/backup/etcd-snapshot-previoys.db 的先前存在的快照
+
+   提供了以下TLS证书和密钥，用于使用 etcdctl 连接到服务器：
+
+   - ca证书：/opt/KUIN000601/ca.crt
+   - 客户端证书：/opt/KUIN000601/etcd-client.crt
+   - 客户端密钥：/opt/KUIN000601/etcd-client.key
+
+``` sh
+#备份：
+ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
+  --cacert=<trusted-ca-file> --cert=<cert-file> --key=<key-file> \
+  snapshot save <backup-file-location>
+#恢复：  
+ETCDCTL_API=3 etcdctl --data-dir <data-dir-location> snapshot restore snapshotdb
+
+# 切换 etcd 目录，先停 etcd
+cd /etc/kubernetes
+mv manifests/etcd.yaml ./ # 移出 etcd.yaml etcd 会自动停止
+# 修改 etcd 数据目录
+vi etcd.yaml
+# 查看 etcd 是否停止
+docker ps -a | grep etcd
+# 移回配置
+mv etcd.yaml
+# 查看 etcd 是否正常启动(可能会有点慢)
+docker ps  | grep etcd
+docker logs xxx
+# 验证 api server 是否正常
+kubectl get node 
+```
+
+# 15. 创建service
+
+1. 重新配置一个已经存在的deployment front-end，在名字为nginx的容器里面添加一个端口配置，名字为http，暴露端口号为80
+
+2. 创建一个service，名字为front-end-svc，暴露该deployment的http端口，并且service的类型为NodePort。
+
+``` 
+kubectl edit deployment front-end 
+# port 配置存在不做修改，不存在则加入 port 规则； 一个 service 可以增加多个 port
+    ports:
+    - containerPort: 8080
+      name: http
+      protocol: TCP
+# 创建 svc
+kubectl expose deployment front-end --name=front-end-svc --port=80 --target-port=80 --type=NodePort
+
+```
+
