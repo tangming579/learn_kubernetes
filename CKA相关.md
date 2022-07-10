@@ -1,3 +1,89 @@
+# 题
+
+1. **RBAC鉴权**（4分）
+
+   - 创建一个名为 deployment-clusterrole 的 ClusterRole, 并且对该 ClusterRole 只绑定对 Deployment，Daemonset, Statefulset 的创建权限
+   - 在指定 namespace app-team1 创建一个名为 cicd-token 的 ServiceAccount，并且将上一步创建 ClusterRole 和该 ServiceAccount 绑定
+   - 限定在 app-team1 namespace 下。
+
+2. **设置 Node 不可调度**（4分）
+
+   将ek8s-node-1节点设置为不可用，然后重新调度该节点上的所有Pod
+
+3. **升级集群节点**
+
+   现有的 Kubernetes 集权正在运行的版本是 1.21.0，仅将主节点上的所有 kubernetes 控制面板和组件升级到版本 1.22.0 另外，在主节点上升级 kubelet 和 kubectl
+
+4. **创建NetworkPolicy**（7分）
+
+   创建 NetworkPolicy 名称为 allow-port-from-namespace ，允许 internal namespace 下的 pod 访问同 namespace 下 pod 的 9000 端口。不允许其它 namespace 下 Pod 连接，不允许非 9000 端口的 pod 访问。
+
+5. **Pod 部署到指定节点**（4分）
+
+   创建一个Pod，名字为nginx-kusc00401，镜像地址是nginx，调度到具有disk=spinning标签的节点上
+
+6. **获取 Pod 节点健康数**（4分）
+
+   检查集群中有多少节点为Ready状态，并且去除包含NoSchedule污点的节点。之后将数字写到/opt/KUSC00402/kusc00402.txt
+
+7. **创建多个 container 的 pod**（4分）
+
+   创建一个Pod，名字为kucc1，这个Pod可能包含1-4容器，该题为四个：nginx+redis+memcached+consul
+
+8. **创建 Persistent Volume**
+
+   创建一个pv，名字为app-config，大小为2Gi，访问权限为ReadWriteMany。Volume的类型为hostPath，路径为/srv/app-config
+
+9. **创建 Persistent Volume Claim**
+
+   创建一个名字为pv-volume的pvc，指定storageClass为csi-hostpath-sc，大小为10Mi
+   然后创建一个Pod，名字为web-server，镜像为nginx，并且挂载该PVC至/usr/share/nginx/html，挂载的权限为ReadWriteOnce。之后通过kubectl edit或者kubectl path将pvc改成70Mi，并且记录修改记录。
+
+10. **过滤Pod 日志**（5分）
+
+    监控名为foobar的Pod的日志，并过滤出具有unable-access-website 信息的行，然后将写入到 /opt/KUTR00101/foobar
+
+11. **添加 sidecar container**（7分）
+
+    添加一个名为busybox且镜像为busybox的sidecar到一个已经存在的名为legacy-app的Pod上，这个sidecar的启动命令为/bin/sh, -c, 'tail -n+1 -f /var/log/legacy-app.log'。
+    并且这个sidecar和原有的镜像挂载一个名为logs的volume，挂载的目录为/var/log/
+
+12. **CPU 使用率最高的 Pod**（5分）
+
+    找出具有name=cpu-user的Pod，并过滤出使用CPU最高的Pod，然后把它的名字写在已经存在的/opt/KUTR00401/KUTR00401.txt文件里（注意他没有说指定namespace。所以需要使用-A指定所以namespace）
+
+13. **集群故障排查**（13分）
+
+    情况1：一个名为wk8s-node-0的节点状态为NotReady，让其他恢复至正常状态，并确认所有的更改开机自动完成
+
+    情况2：Pod 不能创建出来，检查 k8s 静态资源是否存在
+
+14. 备份还原 etcd
+
+    1. 为运行在 https://127.0.0.1:2379 上的现有 etcd 实例创建快照并且将快照保存到 /etc/data/etcd-snapshot.db
+
+    2. 还原  /var/lib/backup/etcd-snapshot-previoys.db 的先前存在的快照
+
+       提供了以下TLS证书和密钥，用于使用 etcdctl 连接到服务器：
+
+       - ca证书：/opt/KUIN000601/ca.crt
+       - 客户端证书：/opt/KUIN000601/etcd-client.crt
+       - 客户端密钥：/opt/KUIN000601/etcd-client.key
+
+15. **创建 Service**（7分）
+
+    重新配置现有的 deployment front-end   ，并添加一个名为 http 的 port 规范，公开现有容器 nginx 的端口 80/tcp
+
+    创建 service 名称为 front-end-svc 暴露窗口的 http 端口，通过高度节点的 NodePort 访问 Pod
+
+16. **创建 Ingress**（8分）
+
+    重新配置现有的 deployment front-end   ，并添加一个名为 http 的 port 规范，公开现有容器 nginx 的端口 80/tcp
+
+    创建 service 名称为 front-end-svc 暴露窗口的 http 端口，通过高度节点的 NodePort 访问 Pod
+
+
+
 # 1. 使用 RBAC 鉴权
 
 https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/
