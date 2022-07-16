@@ -10,9 +10,15 @@
 
    将ek8s-node-1节点设置为不可用，然后重新调度该节点上的所有Pod
 
-3. **升级集群节点**
+3. ~~**升级集群节点**~~
 
    现有的 Kubernetes 集权正在运行的版本是 1.21.0，仅将主节点上的所有 kubernetes 控制面板和组件升级到版本 1.22.0 另外，在主节点上升级 kubelet 和 kubectl
+
+   注意：
+
+   - drain 升级主节点之前，uncordon 在升级后
+
+   - 不要升级工作节点、etcd、容器管理器、CNI插件、DNS服务或任何其他插件
 
 4. ~~**创建NetworkPolicy**（7分）~~
 
@@ -22,7 +28,7 @@
 
    创建一个Pod，名字为nginx-kusc00401，镜像地址是nginx，调度到具有disk=spinning标签的节点上
 
-6. **获取 Pod 节点健康数**（4分）
+6. ~~**获取 Pod 节点健康数**（4分）~~
 
    检查集群中有多少节点为Ready状态，并且去除包含NoSchedule污点的节点。之后将数字写到/opt/KUSC00402/kusc00402.txt
 
@@ -34,7 +40,7 @@
 
    创建一个pv，名字为app-config，大小为2Gi，访问权限为ReadWriteMany。Volume的类型为hostPath，路径为/srv/app-config
 
-9. **创建 Persistent Volume Claim**
+9. ~~**创建 Persistent Volume Claim**~~
 
    创建一个名字为pv-volume的pvc，指定storageClass为csi-hostpath-sc，大小为10Mi
    然后创建一个Pod，名字为web-server，镜像为nginx，并且挂载该PVC至/usr/share/nginx/html，挂载的权限为ReadWriteOnce。之后通过kubectl edit或者kubectl path将pvc改成70Mi，并且记录修改记录。
@@ -137,6 +143,40 @@ kubectl uncordon NODE
 # 3. 升级集群
 
 https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+
+```sh
+# 停止调度
+kubectl cordon k8s-master 
+# master 进行 pod 驱逐
+kubectl drain k8s-master --ignore-daemonsets --delete-emptydir-data --force
+# 登录到 master 节点
+ssh k8s-master 
+# 切换到 root 用户
+# 更新
+ apt-mark unhold kubeadm && \
+ apt-get update && apt-get install -y kubeadm=1.19.0-00 && \
+ apt-mark hold kubeadm
+ 
+# 查看 kubeadm 版本
+kubeadm version
+# 验证集群是否可以更新
+kubeadm upgrade plan
+# 指定升级版本升级
+kubeadm upgrade apply v1.19.0 --etcd-upgrade=false
+
+# 升级 kubelet kubectl 
+apt-get install kubelet=1.19.0-00 kubectl=1.19.0-00
+# 查看升级后版本
+kubectl version
+# 重新运行 kubelet 
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+# uncordon node 恢复节点的调度
+kubectl uncordon k8s-master
+```
+
+
 
 # 4. NetworkPolicy
 
