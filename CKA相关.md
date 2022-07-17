@@ -49,22 +49,22 @@
 
     监控名为foobar的Pod的日志，并过滤出具有unable-access-website 信息的行，然后将写入到 /opt/KUTR00101/foobar
 
-11. **添加 sidecar container**（7分）
+11. ~~**添加 sidecar container**（7分）~~
 
     添加一个名为busybox且镜像为busybox的sidecar到一个已经存在的名为legacy-app的Pod上，这个sidecar的启动命令为/bin/sh, -c, 'tail -n+1 -f /var/log/legacy-app.log'。
     并且这个sidecar和原有的镜像挂载一个名为logs的volume，挂载的目录为/var/log/
 
-12. **CPU 使用率最高的 Pod**（5分）
+12. ~~**CPU 使用率最高的 Pod**（5分）~~
 
-    找出具有name=cpu-user的Pod，并过滤出使用CPU最高的Pod，然后把它的名字写在已经存在的/opt/KUTR00401/KUTR00401.txt文件里（注意他没有说指定namespace。所以需要使用-A指定所以namespace）
+    找出具有name=cpu-user的Pod，并过滤出使用CPU最高的Pod，然后把它的名字写在已经存在的/opt/KUTR00401/KUTR00401.txt文件里（注意他没有说指定namespace。所以需要使用-A指定所有namespace）
 
-13. **集群故障排查**（13分）
+13. ~~**集群故障排查**（13分）~~
 
     情况1：一个名为wk8s-node-0的节点状态为NotReady，让其他恢复至正常状态，并确认所有的更改开机自动完成
 
     情况2：Pod 不能创建出来，检查 k8s 静态资源是否存在
 
-14. **备份还原** etcd
+14. ~~**备份还原** etcd~~
 
     1. 为运行在 https://127.0.0.1:2379 上的现有 etcd 实例创建快照并且将快照保存到 /etc/data/etcd-snapshot.db
 
@@ -76,19 +76,23 @@
        - 客户端证书：/opt/KUIN000601/etcd-client.crt
        - 客户端密钥：/opt/KUIN000601/etcd-client.key
 
-15. **创建 Service**（7分）
+15. ~~**创建 Service**（7分）~~
 
-    重新配置现有的 deployment front-end   ，并添加一个名为 http 的 port 规范，公开现有容器 nginx 的端口 80/tcp
-
-    创建 service 名称为 front-end-svc 暴露窗口的 http 端口，通过高度节点的 NodePort 访问 Pod
-
-16. **创建 Ingress**（8分）
-
-    重新配置现有的 deployment front-end   ，并添加一个名为 http 的 port 规范，公开现有容器 nginx 的端口 80/tcp
+    重新配置现有的 deployment front-end，并添加一个名为 http 的 port 规范，公开现有容器 **nginx** 的端口 80/tcp
 
     创建 service 名称为 front-end-svc 暴露窗口的 http 端口，通过高度节点的 NodePort 访问 Pod
 
+16. ~~**创建 Ingress**（8分）~~
 
+    在**ing-internal** 命名空间下创建一个ingress，名字为pong，代理的service hi，端口为5678，配置路径/hi。
+
+    验证：访问curl -kL <INTERNAL_IP>/hi会返回hi
+
+17. ~~扩容 Deployment~~
+
+    ```
+    扩容名字为loadbalancer的deployment的副本数为6
+    ```
 
 # 1. 使用 RBAC 鉴权
 
@@ -394,7 +398,7 @@ kubectl get po legacy-app -oyaml > c-sidecar.yaml
 
 ```sh
 $ kubectl config use-context k8s
-$ kubectl top pod -A -l name=cpu-user
+$ kubectl kubectl top pod -A -l name=cpu-user --sort-by=cpu
 NAMESPACE     NAME                       CPU(cores)   MEMORY(bytes)   
 kube-system   coredns-54d67798b7-hl8xc   7m           8Mi             
 kube-system   coredns-54d67798b7-m4m2q   6m           8Mi
@@ -495,5 +499,13 @@ spec:
             name: hi
             port:
               number: 5678
+```
+
+# 17. 扩容 Deployment
+
+扩容 deployment 到 6 个 pod
+
+```sh
+kubectl scale deploy loadbalancer --replicas=6 
 ```
 
