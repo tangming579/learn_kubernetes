@@ -127,6 +127,8 @@ kubectl create rolebinding bob-admin-binding --clusterrole=admin --user=bob --na
 kubectl create clusterrolebinding root-cluster-admin-binding --clusterrole=cluster-admin --user=root
 ```
 
+**CKA易错点：创建rolebinding的时候未指定namespace，把rolebinding创建在了default空间下**
+
 # 2. 节点控制（cordon、drain）
 
 https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#cordon
