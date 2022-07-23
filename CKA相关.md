@@ -182,7 +182,7 @@ sudo systemctl restart kubelet
 kubectl uncordon k8s-master
 ```
 
-
+**CKA易错点：一定要先drain，最后uncordon，升级时要加 --etcd-upgrade=false**
 
 # 4. NetworkPolicy
 
