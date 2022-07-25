@@ -127,7 +127,7 @@ kubectl create rolebinding bob-admin-binding --clusterrole=admin --user=bob --na
 kubectl create clusterrolebinding root-cluster-admin-binding --clusterrole=cluster-admin --user=root
 ```
 
-**CKA易错点：创建rolebinding的时候未指定namespace，把rolebinding创建在了default空间下**
+**CKA易错点：创建rolebinding的时候未指定namespace，把rolebinding创建在了default空间下；绑定指定的是clusterrole，不是role**
 
 # 2. 节点控制（cordon、drain）
 
@@ -479,6 +479,8 @@ kubectl edit deployment front-end
 kubectl expose deployment front-end --name=front-end-svc --port=80 --target-port=80 --type=NodePort
 
 ```
+
+**易错点：service 别忘了指定名字**
 
 # 16. 创建Ingress
 
