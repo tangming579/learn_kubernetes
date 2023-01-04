@@ -125,12 +125,22 @@ cat /etc/hosts
 
  设置work-node1和work-node2。方法同上。
 
+## kubeadm安装k8s
+
+由于之前已经设置好了kubernetes的yum源，只要执行
+
+> k8s 已经弃用了docker了，如果安装 V1.24就会出现错误，安装的时候指定一下1.23版本，就可以解决了
+
+```bash
+yum install -y kubelet-1.23.6 kubeadm-1.23.6 kubectl-1.23.6
+```
+
 ## 主节点初始化K8S
 
 主节点就是本文提到的“master-node”虚拟机。 执行下列代码，开始master节点的初始化工作：
 
 ```
-kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.56.102
+kubeadm init --apiserver-advertise-address=192.168.56.102 --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers --kubernetes-version v1.23.6 --service-cidr=10.1.0.0/16 --pod-network-cidr=10.244.0.0/16
 ```
 
 - 提示：/proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1
@@ -155,4 +165,29 @@ kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.
   systemctl restart containerd
   ```
 
+- 提示：The HTTP call equal to ‘curl -sSL http://localhost:10248/healthz’ failed
+
+  解决方法：https://blog.csdn.net/qq_43762191/article/details/125567365
+
+  ```
+  vim /etc/docker/daemon.json
   
+  {
+    "exec-opts": ["native.cgroupdriver=systemd"]
+  }
+  ```
+
+  ```
+  # 重启docker
+  systemctl restart docker
+  ```
+
+  ```
+  # 重新初始化
+  kubeadm reset # 先重置
+  
+  kubeadm init……
+  ```
+
+  
+
