@@ -8,7 +8,7 @@
 
 ## 必要的准备
 
-## 关闭防火墙
+### 关闭防火墙
 
 防火墙一定要提前关闭，否则在后续安装K8S集群的时候是个trouble maker。执行下面语句关闭，并禁用开机启动：
 
@@ -29,7 +29,7 @@ UUID=c32383b8-5912-4536-8cd5-4d6ab99d8c45 /boot                   xfs     defaul
 #/dev/mapper/centos-swap swap                    swap    defaults        0 0
 ```
 
-## 关闭SeLinux
+### 关闭SeLinux
 
 临时关闭：
 
@@ -54,3 +54,105 @@ SELINUX=disabled
 ```
 sestatus
 ```
+
+### 配置yum源
+
+下载centos基础yum源配置（这里用的是阿里云的镜像）
+
+```
+curl -o CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+```
+
+
+下载docker的yum源配置
+
+```
+curl -o docker-ce.repo https://download.docker.com/linux/centos/docker-ce.repo
+```
+
+
+配置kubernetes的yum源
+
+```
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+        http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+```
+
+
+执行下列命令刷新yum源缓存
+
+```
+yum clean all
+yum makecache
+yum repolist
+```
+
+安装docker
+
+```
+yum install -y docker-ce
+```
+
+## 设置三个虚拟机网络
+
+对master-node做如下设置
+
+编辑/etc/hostname，将hostname修改为master-node
+编辑/etc/hosts，追加内容 【192.168.56.109 master-node】【192.168.56.110 work-node1】【192.168.56.108 work-node2】
+过程展示如下：
+
+```
+vi /etc/hostname 
+vi /etc/hosts
+cat /etc/hostname 
+master-node
+
+cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.56.102   master-node
+192.168.56.104   work-node1
+192.168.56.103   work-node2
+```
+
+ 设置work-node1和work-node2。方法同上。
+
+## 主节点初始化K8S
+
+主节点就是本文提到的“master-node”虚拟机。 执行下列代码，开始master节点的初始化工作：
+
+```
+kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.56.102
+```
+
+- 提示：/proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1
+
+  解决方法：
+
+  ```
+  echo "1" >/proc/sys/net/bridge/bridge-nf-call-iptables
+  ```
+
+- 提示：unknown service runtime.v1alpha2.RuntimeService
+
+  解决方法：
+
+  参考：https://www.cnblogs.com/immaxfang/p/16721407.html
+
+  删除 /etc/containerd/config.toml 文件并重启 containerd 即可。
+
+  ```
+  mv /etc/containerd/config.toml /root/config.toml.bak
+  
+  systemctl restart containerd
+  ```
+
+  
