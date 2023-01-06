@@ -189,5 +189,14 @@ kubeadm init --apiserver-advertise-address=192.168.56.102 --image-repository reg
   kubeadm init……
   ```
 
+- 提示：The connection to the server localhost:8080 was refused - did you specify the right host or port
+
+  ```sh
+  #设置环境变量（worker节点没有admin.conf，要从master的 /etc/kubernetes/中拷贝
+  echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> /etc/profile
+  #使设置生效
+  source /etc/profile
+  ```
+
   
 
