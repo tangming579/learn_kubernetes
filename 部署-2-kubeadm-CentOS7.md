@@ -37,7 +37,7 @@ UUID=c32383b8-5912-4536-8cd5-4d6ab99d8c45 /boot                   xfs     defaul
 setenforce 0
 ```
 
-要永久禁用SELinux，请使用您最喜欢的文本编辑器打开/etc/sysconfig/selinux文件，如下所示：
+要永久禁用SELinux，使用编辑器打开/etc/sysconfig/selinux文件，如下所示：
 
 ```
 vi /etc/sysconfig/selinux
@@ -192,11 +192,12 @@ kubeadm init --apiserver-advertise-address=192.168.56.102 --image-repository reg
 - 提示：The connection to the server localhost:8080 was refused - did you specify the right host or port
 
   ```sh
-  #设置环境变量（worker节点没有admin.conf，要从master的 /etc/kubernetes/中拷贝
+  #设置环境变量
+  #（worker节点没有admin.conf，要从master的 /etc/kubernetes/中拷贝
   echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> /etc/profile
   #使设置生效
   source /etc/profile
-  ```
-
+```
+  
   
 
