@@ -55,3 +55,47 @@ helm lint 对一个Helm Chart进行语法检查和校验
 - 微软仓库 http://mirror.azure.cn/kubernetes/charts/
 - 阿里云仓库 https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
 - 官方仓库 https://hub.kubeapps.com/charts/incubator
+
+```shell
+# 添加仓库
+[root@k8smaster ~]# helm repo add  aliyun https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+"aliyun" has been added to your repositories
+
+[root@k8smaster ~]# helm repo add stable http://mirror.azure.cn/kubernetes/charts/
+"stable" has been added to your repositories
+
+# 查看仓库
+[root@k8smaster ~]# helm repo list
+NAME      URL                                                   
+aliyun    https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+stable    http://mirror.azure.cn/kubernetes/charts/
+
+helm repo update # 更新仓库
+helm repo remove aliyun #删除仓库
+```
+
+### 部署应用
+
+查找应用
+
+```shell
+# 通过helm search repo 名称
+[root@centos-master home]# helm search repo weave
+NAME                    CHART VERSION   APP VERSION     DESCRIPTION
+aliyun/weave-cloud      0.1.2                           Weave Cloud is a add-on to Kubernetes which pro...
+aliyun/weave-scope      0.9.2           1.6.5           A Helm chart for the Weave Scope cluster visual...
+```
+
+安装应用
+
+```shell
+# helm install 安装后应用名称 搜索后应用名称
+[root@k8smaster ~]# helm install app-ui aliyun/weave-cloud
+
+# 查看安装列表
+[root@k8smaster ~]# helm list
+
+# 查看安装状态
+[root@k8smaster ~]# helm status app-ui
+```
+
