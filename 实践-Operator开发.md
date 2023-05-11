@@ -32,13 +32,22 @@ Operator有时也被称为CRD机制：
 安装gcc和make
 
 ```
+# Linux系统：
 apt-get install gcc automake autoconf libtool make
-window下直接安装cygwin，选择gcc和make等组件即可
+
+# Windows系统：
+直接安装cygwin，选择gcc和make等组件即可
 ```
 
-安装SDK
+安装SDK（Windows下需要在 Cygwin Terminal 中执行）
 
 https://sdk.operatorframework.io/docs/installation/
+
+Windows下Make命令：
+
+https://cygwin.com/install.html
+
+https://www.mingw-w64.org/downloads/#mingw-builds
 
 ```
 $ git clone https://github.com/operator-framework/operator-sdk
