@@ -1,6 +1,8 @@
 ## 概念
 
-Operator 是一种 kubernetes 的扩展形式，可以帮助用户以 Kubernetes 的声明式 API 风格自定义来管理应用及服务
+Operator 是一种 kubernetes 的扩展形式，可以帮助用户以 Kubernetes 的声明式 API 风格自定义来管理应用及服务，`Operator` 就可以看成是 CRD 和 Controller 的一种组合特例，Operator 是一种思想，它结合了特定领域知识并通过 CRD 机制扩展了 Kubernetes API 资源，使用户管理 Kubernetes 的内置资源（Pod、Deployment等）一样创建、配置和管理应用程序。
+
+Operator 通过扩展 Kubernetes API 资源以代表 Kubernetes 用户创建、配置和管理复杂应用程序的实例，通常包含资源模型定义和控制器，通过 `Operator` 通常是为了实现某种特定软件（通常是有状态服务）的自动化运维。
 
 相关概念
 
@@ -19,6 +21,14 @@ Operator有时也被称为CRD机制：
 
 ## Operator SDK
 
+Operator SDK 提供了用于开发 Go、Ansible 以及 Helm 中的 Operator 的工作流，下面的工作流适用于 Golang 的 Operator：
+
+1. 使用 SDK 创建一个新的 Operator 项目
+2. 通过添加自定义资源（CRD）定义新的资源 API
+3. 指定使用 SDK API 来 watch 的资源
+4. 定义 Operator 的协调（reconcile）逻辑
+5. 使用 Operator SDK 构建并生成 Operator 部署清单文件
+
 ### 安装
 
 前置安装
@@ -31,12 +41,18 @@ Operator有时也被称为CRD机制：
 
 安装gcc和make
 
-```
+```sh
 # Linux系统：
 apt-get install gcc automake autoconf libtool make
 
-# Windows系统：
+# Windows系统-方法1：
 直接安装cygwin，选择gcc和make等组件即可
+
+# Windows系统-方法2：
+1.下载并安装 MinGW。
+2.将 MinGW 的 bin 目录添加到系统的环境变量 path 中。412
+3.将 MinGW 的 bin 目录中的 mingw32-make.exe 改名为 make.exe。41
+4.在命令行中输入 make -v 来检查是否安装成功。4
 ```
 
 安装SDK（Windows下需要在 Cygwin Terminal 中执行）
@@ -49,7 +65,9 @@ https://cygwin.com/install.html
 
 https://www.mingw-w64.org/downloads/#mingw-builds
 
-```
+https://jmeubank.github.io/tdm-gcc/download/
+
+```sh
 $ git clone https://github.com/operator-framework/operator-sdk
 $ cd operator-sdk
 $ git checkout master
@@ -59,3 +77,42 @@ $ make install
 $ operator-sdk version
 ```
 
+### 使用
+
+1. 开启 go module 和代理
+
+   ```sh
+   $ go env -w GO111MODULE=on
+   $ go env -w GOPROXY=https://goproxy.cn,direct
+   ```
+
+2. 设置环境变量
+
+   macOS 或 Linux
+
+   ```sh
+   $ echo "export GO111MODULE=on" >> ~/.profile
+   $ echo "export GOPROXY=https://goproxy.cn" >> ~/.profile
+   $ source ~/.profile
+   ```
+
+   Windows 
+
+   ```sh
+   # 打开Powershell执行：
+   C:\> $env:GO111MODULE = "on"
+   C:\> $env:GOPROXY = "https://goproxy.cn"
+   ```
+
+3. 初始化项目
+
+   ```sh
+   # 创建项目目录
+   $ mkdir -p opdemo && cd opdemo
+   # 使用 sdk 创建一个名为 opdemo 的 operator 项目，如果在 GOPATH 之外需要指定 repo 参数
+   $ go mod init github.com/tangming579/opdemo/v2
+   # 使用下面的命令初始化项目
+   $ operator-sdk init --domain ydzs.io --license apache2 --owner "cnych"
+   ```
+
+4. 11
