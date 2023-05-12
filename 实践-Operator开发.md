@@ -31,6 +31,8 @@ Operator SDK 提供了用于开发 Go、Ansible 以及 Helm 中的 Operator 的�
 
 ### 安装
 
+参考：https://andblog.cn/3209
+
 前置安装
 
 ```
@@ -77,7 +79,7 @@ $ make install
 $ operator-sdk version
 ```
 
-### 使用
+### 初始化
 
 1. 开启 go module 和代理
 
@@ -112,7 +114,69 @@ $ operator-sdk version
    # 使用 sdk 创建一个名为 opdemo 的 operator 项目，如果在 GOPATH 之外需要指定 repo 参数
    $ go mod init github.com/tangming579/opdemo/v2
    # 使用下面的命令初始化项目
-   $ operator-sdk init --domain ydzs.io --license apache2 --owner "cnych"
+   $ operator-sdk init --domain tangming579.io --license apache2 --owner "tangming579"
    ```
 
-4. 11
+4. 升级后项目结构如下
+
+   ```sh
+   $ tree -L 2
+   .
+   ├── config
+   │   ├── default
+   │   ├── manager
+   │   ├── manifests
+   │   ├── prometheus
+   │   ├── rbac
+   │   └── scorecard
+   ├── Dockerfile
+   ├── go.mod
+   ├── go.sum
+   ├── hack
+   │   └── boilerplate.go.txt
+   ├── main.go
+   ├── Makefile
+   ├── PROJECT
+   └── README.md
+   
+   9 directories, 8 files
+   ```
+
+   ### 添加API
+
+   使用 `operator-sdk init` 命令创建新的 Operator 项目结构：
+
+   - go.mod/go.sum  – Go Modules 包管理清单，用来描述当前 Operator 的依赖包。
+
+   - main.go 文件，使用 operator-sdk API 初始化和启动当前 Operator 的入口。
+   - deploy – 包含一组用于在 Kubernetes 集群上进行部署的通用的 Kubernetes 资源清单文件。
+   - pkg/apis – 包含定义的 API 和自定义资源（CRD）的目录树，这些文件允许 sdk 为 CRD 生成代码并注册对应的类型，以便正确解码自定义资源对象。
+   - pkg/controller – 用于编写所有的操作业务逻辑的地方
+   - version – 版本定义
+   - build – Dockerfile 定义目录
+
+   我们主要需要编写的是 `pkg` 目录下面的 api 定义以及对应的 controller 实现。
+
+   Operator 相关根目录下面执行如下命令添加新 API
+
+   ```sh
+   $ operator-sdk create api --group app --version v1beta1 --kind AppService
+   Create Resource [y/n]
+   y
+   Create Controller [y/n]
+   y
+   Writing kustomize manifests for you to edit...
+   Writing scaffold for you to edit...
+   api/v1beta1/appservice_types.go
+   controllers/appservice_controller.go
+   Update dependencies:
+   $ go mod tidy
+   Running make:
+   $ make generate
+   mkdir -p /root/opdemo/bin
+   test -s /root/opdemo/bin/controller-gen && /root/opdemo/bin/controller-gen --version | grep -q v0.11.1 || \
+   GOBIN=/root/opdemo/bin go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.11.1
+   
+   ```
+
+   
