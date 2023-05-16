@@ -81,76 +81,28 @@ $ operator-sdk version
 
 ### 常用命令
 
-#### 1. operator-sdk build
+#### 1. operator-sdk init
 
-命令编译代码并生成可执行文件
-
-```
-operator-sdk build quay.io/example/operator:v0.0.1
-```
-
-#### 2. operator-sdk completion
-
-生成bash补全
+初始化一个新的 Operator 项目，包括 go.mod、PROJECT、Makefile、main.go、config（部署yaml）
 
 ```
-operator-sdk completion
+operator-sdk init --domain tangming579.io --license apache2 --owner "tangming579"
 ```
 
-#### 3. operator-sdk print-deps
+#### 2. operator-sdk create api
 
-命令显示操作员所需的最新Golang软件包和版本。默认情况下，它以列格式打印
-
-```
-operator-sdk print-deps --as-file
-```
-
-#### 4. operator-sdk generate
-
-命令将调用特定的生成器以根据需要生成代码
-
-#### 5. operator-sdk olm-catalog gen-csv
-
-子命令将集群服务版本（CSV）清单和可选的自定义资源定义（CRD）文件写入 `deploy/olm-catalog/<operator_name>/<csv_version>`
+创建一个 Operator API 脚手架，包括 CRD 、Controller 等
 
 ```
-$ operator-sdk olm-catalog gen-csv --csv-version 0.1.0 --update-crds
-INFO[0000] Generating CSV manifest version 0.1.0
-INFO[0000] Fill in the following required fields in file deploy/olm-catalog/operator-name/0.1.0/operator-name.v0.1.0.clusterserviceversion.yaml:
-    spec.keywords
-    spec.maintainers
-    spec.provider
-    spec.labels
-INFO[0000] Created deploy/olm-catalog/operator-name/0.1.0/operator-name.v0.1.0.clusterserviceversion.yaml
+operator-sdk create api --group ship --version v1beta1 --kind Frigate
 ```
 
-#### 6. operator-sdk new
+#### 3. operator-sdk create webhook
+
+创建 webhook 脚手架
 
 ```
-$ mkdir $GOPATH/src/github.com/example.com/
-$ cd $GOPATH/src/github.com/example.com/
-$ operator-sdk new app-operator
-$ operator-sdk new app-operator \
-    --type=ansible \
-    --api-version=app.example.com/v1alpha1 \
-    --kind=AppService
-```
-
-#### 7. operator-sdk add
-
-命令将控制器或资源添加到项目中。该命令必须从Operator项目的根目录运行。
-
-#### 8. operator-sdk up local
-
-该local子命令通过构建可以使用kubeconfig文件访问Kubernetes集群的操作员二进制文件在本地计算机上启动操作员 。
-
-```
-$ operator-sdk up local \
-  --kubeconfig "mycluster.kubecfg" \
-  --namespace "default" \
-  --operator-flags "--flag1 value1 --flag2=value2"
-$ operator-sdk up local --operator-flags "--resync-interval 10"
-$ operator-sdk up local --namespace "testing"
+operator-sdk create webhook --group ship --version v1beta1 --kind Frigate --defaulting --programmatic-validation
 ```
 
 ### 初始化
@@ -216,7 +168,7 @@ $ operator-sdk up local --namespace "testing"
    9 directories, 8 files
    ```
 
-   ### 添加API
+### 添加API
 
    使用 `operator-sdk init` 命令创建新的 Operator 项目结构：
 
