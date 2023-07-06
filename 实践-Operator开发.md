@@ -138,7 +138,7 @@ operator-sdk create webhook --group ship --version v1beta1 --kind Frigate --defa
    # 创建项目目录
    $ mkdir -p opdemo && cd opdemo
    # 使用 sdk 创建一个名为 opdemo 的 operator 项目，如果在 GOPATH 之外需要指定 repo 参数
-   $ go mod init github.com/tangming579/opdemo/v2
+   $ go mod init github.com/tangming579/operator-sample/v2
    # 使用下面的命令初始化项目
    $ operator-sdk init --domain tangming579.io --license apache2 --owner "tangming579"
    ```
@@ -205,4 +205,8 @@ operator-sdk create webhook --group ship --version v1beta1 --kind Frigate --defa
    
    ```
 
-   
+### 调试
+
+
+
+### 部署

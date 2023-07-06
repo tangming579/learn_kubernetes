@@ -55,7 +55,7 @@ sudo service docker status
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
-minikube start --registry-mirror=https://registry.docker-cn.com  --image-mirror-country cn --kubernetes-version=v1.23.3
+minikube start --registry-mirror=https://registry.docker-cn.com  --image-mirror-country cn --kubernetes-version=v1.26.3
 
 验证
 $kubectl get ns
