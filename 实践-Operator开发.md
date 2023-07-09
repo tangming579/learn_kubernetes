@@ -230,7 +230,8 @@ docker-build: test ## Build docker image with the manager.
 	cp bin/manager ./manager && docker build -t ${IMG} .
 	
 # Image URL to use all building/pushing image targets
-IMG ?= tangming579/app/operator-sample:latest
+IMAGE_TAG_BASE ?= tangming579/operator-sample
+IMG ?= tangming579/operator-sample:latest
 	
 # 增加 redeploy 和 rebuild 方法
 redeploy: build docker-build docker-push undeploy deploy
