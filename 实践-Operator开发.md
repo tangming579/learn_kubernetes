@@ -205,6 +205,46 @@ operator-sdk create webhook --group ship --version v1beta1 --kind Frigate --defa
    
    ```
 
+### 修改配置
+
+**修改 Dockerfile**
+
+删除从源码构建过程，只保留如下内容：
+
+```dockerfile
+FROM ubuntu:jammy
+WORKDIR /
+ENV TZ=Asia/Shanghai
+COPY manager .
+USER 65532:65532
+
+ENTRYPOINT ["/manager"]
+```
+
+**修改 Makefile**
+
+```makefile
+# 修改为从 bin 拷贝 manager 再构建docker镜像
+.PHONY: docker-build
+docker-build: test ## Build docker image with the manager.
+	cp bin/manager ./manager && docker build -t ${IMG} .
+	
+# Image URL to use all building/pushing image targets
+IMG ?= tangming579/app/operator-sample:latest
+	
+# 增加 redeploy 和 rebuild 方法
+redeploy: build docker-build docker-push undeploy deploy
+	echo "redeploy finished"
+
+rebuild: build docker-build docker-push
+	kubectl delete pod `kubectl get pod -nsystem|grep system|awk '{print $$1}'` -nsystem
+	echo "rebuild finished"
+	echo "watch log:"
+	sleep 2
+	echo "kubectl logs --tail 100 -f `kubectl get pod -ninspection|grep inspection|awk '{print $$1}'` -c manager -nsystem"
+
+```
+
 ### 调试
 
 

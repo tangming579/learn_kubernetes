@@ -47,6 +47,20 @@ sudo service docker start
 sudo service docker status
 ```
 
+## 安装Kubectl
+
+下载
+
+```
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+```
+
+安装
+
+```
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+```
+
 ## 安装MiniKube
 
 参考：https://zhuanlan.zhihu.com/p/543458320
@@ -64,5 +78,17 @@ default           Active   102s
 kube-node-lease   Active   104s
 kube-public       Active   104s
 kube-system       Active   104s
+```
+
+启动报错：
+
+```
+ Exiting due to DRV_AS_ROOT: The "docker" driver should not be used with root privileges
+```
+
+解决方法：
+
+```
+minikube start --force --driver=docker
 ```
 
