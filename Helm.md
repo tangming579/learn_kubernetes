@@ -99,3 +99,43 @@ aliyun/weave-scope      0.9.2           1.6.5           A Helm chart for the Wea
 [root@k8smaster ~]# helm status app-ui
 ```
 
+## 制作 Helm包
+
+```
+helm create myapp
+
+tree myapp
+
+├── charts                           # 这个 charts 依赖的其他 charts，无依赖可删除
+├── Chart.yaml                       # 描述这个 Chart 的相关信息、包括名字、描述信息、版本等
+├── templates                        # 模板目录
+│   ├── deployment.yaml              # deployment 控制器的 Go 模板文件
+│   ├── _helpers.tpl                 # 以 _ 开头的文件不会部署到 k8s 上，可用于定制通用信息
+│   ├── hpa.yaml                     # hpa 的模板文件
+│   ├── ingress.yaml                 # ingress 的模板文件
+│   ├── NOTES.txt                    # Chart 部署到集群后的一些信息，例如：如何使用、列出缺省值
+│   ├── serviceaccount.yaml          # serviceaccount 的 Go 模板文件
+│   ├── service.yaml                 # service 的 Go 模板文件
+│   └── tests                        # 测试pod目录
+│       └── test-connection.yaml     # 测试pod的deployment文件
+└── values.yaml                      # 模板的值文件，这些值会在安装时应用到 GO 模板生成部署文件
+```
+
+执行以下命令打包helm chart，这将在当前目录下生成一个名为myapp-x.x.x.tgz的tar包，其中x.x.x为当前版本号。
+
+```text
+helm package myapp
+```
+
+发布helm chart，这将把myapp-x.x.x.tgz包推送到名为myrepo的私有helm仓库中。
+
+```
+helm push myapp-x.x.x.tgz myrepo/
+```
+
+helm install命令来在Kubernetes上部署
+
+```
+helm install myapp myrepo/myapp-x.x.x.tgz
+```
+

@@ -1,7 +1,5 @@
 参考：https://github.com/kubernetes-client/java/blob/master/docs/generate-model-from-third-party-resources.md
 
-
-
 1. 拉取镜像
 
    ```
