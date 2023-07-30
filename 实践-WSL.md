@@ -8,7 +8,13 @@ wsl --set-default-version 2
 wsl --list
 wsl --unregister CentOS8
 wsl --list --online
-wsl --install -d Ubuntu-20.04
+
+#在线安装：
+wsl --install -d Ubuntu-22.04
+#下载安装文件：
+Invoke-WebRequest -Uri https://aka.ms/wslubuntu2204 -OutFile Ubuntu.appx -UseBasicParsing
+#设置默认 root 登录
+./ubuntu.exe config --default-user root
 ```
 
 
