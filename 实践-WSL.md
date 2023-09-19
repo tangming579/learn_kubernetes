@@ -11,7 +11,7 @@ wsl --list --online
 wsl --install -d Ubuntu-20.04
 ```
 
-
+升级内核：https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi
 
 ## 安装Docker
 
