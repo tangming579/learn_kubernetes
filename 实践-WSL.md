@@ -8,7 +8,13 @@ wsl --set-default-version 2
 wsl --list
 wsl --unregister CentOS8
 wsl --list --online
-wsl --install -d Ubuntu-20.04
+
+#在线安装：
+wsl --install -d Ubuntu-22.04
+#下载安装文件：
+Invoke-WebRequest -Uri https://aka.ms/wslubuntu2204 -OutFile Ubuntu.appx -UseBasicParsing
+#设置默认 root 登录
+./ubuntu.exe config --default-user root
 ```
 
 升级内核：https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi
@@ -45,6 +51,26 @@ sudo service docker start
 
 #4.4查看docker服务状态
 sudo service docker status
+```
+
+执行 docker ps 报错：
+
+```
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+```
+
+查看 docker日志：
+
+```
+cat /var/log/docker.log
+```
+
+最后经过搜错发现，是因为最新版的ubuntu系统使用了iptables-nft，而WSL2不支持导致的。
+
+需要使用如下命令修改信息：
+
+```haskell
+update-alternatives --config iptables
 ```
 
 ## 安装Kubectl
