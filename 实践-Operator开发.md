@@ -70,10 +70,14 @@ https://www.mingw-w64.org/downloads/#mingw-builds
 https://jmeubank.github.io/tdm-gcc/download/
 
 ```sh
+#通过源码安装：
 $ git clone https://github.com/operator-framework/operator-sdk
 $ cd operator-sdk
 $ git checkout master
 $ make install
+
+#下载release安装，将operator-sdk拷贝到 /usr/local/bin：
+https://github.com/operator-framework/operator-sdk/releases
 
 #确定结果
 $ operator-sdk version
