@@ -77,7 +77,7 @@ $ git checkout master
 $ make install
 
 #下载release安装，
-#下载对应版本文件，修改名称为operator-sdk，拷贝到 /usr/local/bin：
+#下载对应版本文件，修改名称为operator-sdk，拷贝到/usr/local/bin：
 https://github.com/operator-framework/operator-sdk/releases
 
 #确定结果
