@@ -4,9 +4,11 @@ WSL 2 设置为默认版本
 
 ```powershell
 wsl --set-default-version 2
-
+#列出当前已安装版本
 wsl --list
+#卸载指定版本
 wsl --unregister CentOS8
+#列出可安装版本
 wsl --list --online
 
 #在线安装：
@@ -21,7 +23,7 @@ Invoke-WebRequest -Uri https://aka.ms/wslubuntu2204 -OutFile Ubuntu.appx -UseBas
 
 ## 安装Docker
 
-```
+```shell
 #1、新软件列表和允许使用https
 sudo apt-get update
 sudo apt-get install \
@@ -77,7 +79,7 @@ update-alternatives --config iptables
 
 下载
 
-```
+```shell
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 ```
 
@@ -91,7 +93,7 @@ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 参考：https://zhuanlan.zhihu.com/p/543458320
 
-```
+```shell
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
