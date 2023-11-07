@@ -31,7 +31,7 @@ Helm作为K8s的包管理软件，每次安装Charts 到K8s集群时，都会创
 
 ### 二进制安装
 
-helm 二进制包安装，helm 只是是一个单纯的可执行程序
+helm 二进制包安装，helm 只是一个单纯的可执行程序
 
 下载最新 release：https://github.com/helm/helm
 
