@@ -74,7 +74,42 @@
    ./prometheus --config.file=prometheus.yml
    ```
 
+4. 配置说明，参考：
 
+   - https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+   - https://www.cnblogs.com/zhoujinyi/p/11944176.html
+
+   ```
+   global:
+     # 默认情况下抓取目标的频率.
+     [ scrape_interval: <duration> | default = 1m ]
+     # 抓取超时时间.
+     [ scrape_timeout: <duration> | default = 10s ]
+     # 评估规则的频率.
+     [ evaluation_interval: <duration> | default = 1m ]
+     # 与外部系统通信时添加到任何时间序列或警报的标签（联合，远程存储，Alertmanager）.即添加到拉取的数据并存到数据库中
+     external_labels:
+       [ <labelname>: <labelvalue> ... ]
+   # 规则文件指定了一个globs列表. 
+   # 从所有匹配的文件中读取规则和警报.
+   rule_files:
+     [ - <filepath_glob> ... ]
+   # 抓取配置列表.
+   scrape_configs:
+     [ - <scrape_config> ... ]
+   # 警报指定与Alertmanager相关的设置.
+   alerting:
+     alert_relabel_configs:
+       [ - <relabel_config> ... ]
+     alertmanagers:
+       [ - <alertmanager_config> ... ]
+   # 与远程写入功能相关的设置.
+   remote_write:
+     [ - <remote_write> ... ]
+   # 与远程读取功能相关的设置.
+   remote_read:
+     [ - <remote_read> ... ]
+   ```
 
 ## alertmanager安装
 
