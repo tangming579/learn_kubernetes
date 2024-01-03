@@ -233,3 +233,29 @@ tags:
 
 ## alertmanager
 
+https://blog.csdn.net/qq_37843943/article/details/120665690
+
+https://blog.csdn.net/sinat_32582203/article/details/122617740
+
+https://www.cnblogs.com/zydev/p/16850401.html
+
+参数
+
+```
+group_wait: 10s
+group_interval: 30m
+repeat_interval: 50m
+```
+
+告警过程
+
+```
+1. alertmanager收到告警后，等待group_wait（10s），发送第一次通知
+2. 未达到group_interval（30m 10s），休眠
+3. 达到group_interval（30m 10s）时，小于repeat_interval（50m 10s），休眠
+4. 到下一个group_interval（60m 10s），大于repeat_interval（50m 10s），发送第二次通知
+
+Firing（0s） - 第一次通知（10s） - 第二次通知（60m 10s）
+```
+
+
