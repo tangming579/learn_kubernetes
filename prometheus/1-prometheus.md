@@ -259,3 +259,7 @@ Firing（0s） - 第一次通知（10s） - 第二次通知（60m 10s）
 ```
 
 
+
+https://www.cnblogs.com/zhaojiedi1992/p/zhaojiedi_liunx_65_prometheus_alertmanager_conf.html
+
+https://prometheus.io/docs/alerting/latest/configuration/#inhibit_rule
