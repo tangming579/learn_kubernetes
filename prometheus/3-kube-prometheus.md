@@ -1,4 +1,27 @@
-itHub：https://github.com/prometheus-operator/kube-prometheus
+GitHub：https://github.com/prometheus-operator/kube-prometheus
+
+### 包含的组件
+
+- Prometheus Operator：以Deployment的方式运行于Kubernetes集群上
+
+- 高可用 Prometheus：Operator会观察集群内的Prometheus CRD来创建一个合适的statefulset在
+
+- 高可用 Alertmanager
+
+- node-exporter：收集主机的指标数据，如CPU、内存、磁盘、网络等等多个维度的指标数据
+
+- blackbox-exporter
+
+- Prometheus Adapter：用于将Prometheus中的监控数据转换为Kubernetes自定义指标。使得Kubernetes可以基于这些自定义指标进行自动扩展（HPA）和其他自定义操作
+
+- kube-state-metrics：通过监听 API Server 生成有关资源对象的状态指标，比如 Deployment、Node、Pod
+
+  二者的主要区别如下：
+
+  - kube-state-metrics 主要关注的是业务相关的一些元数据，比如 Deployment、Pod、副本状态等
+  - metrics-server 主要关注的是[资源度量 API](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/instrumentation/resource-metrics-api.md) 的实现，比如 CPU、文件描述符、内存、请求延时等指标
+
+- Grafana
 
 ### 监控组件类型
 
