@@ -229,6 +229,8 @@ tags:
 [ refresh_interval: <duration> | default = 30s ]
 ```
 
+### PromQL
+
 
 
 ## alertmanager
