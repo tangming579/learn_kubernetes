@@ -63,27 +63,28 @@ Container Runtime Interface
 
 ## 命令
 
-- `ctr`：containerd 原生命令行工具（不兼容 Docker 命令格式）。
-- `crictl`：Kubernetes CRI 工具，命令类似 Docker（建议优先使用）。
+| 工具          | 开发者     | 主要用途                                                     | 适用场景                          |
+| ------------- | ---------- | ------------------------------------------------------------ | --------------------------------- |
+| **`ctr`**     | Containerd | Containerd 的**原生命令行工具**，直接操作 containerd 的底层功能。 | 调试 containerd，低级别容器操作。 |
+| **`crictl`**  | Kubernetes | 专为 Kubernetes CRI 设计的**调试工具**，命令风格类似 Docker。 | Kubernetes 节点调试，兼容 CRI。   |
+| **`nerdctl`** | containerd | 为 Containerd 设计的**用户友好型工具**，完全兼容 Docker CLI 命令格式。 | 取代 Docker CLI，开发/生产环境。  |
 
 ### 镜像管理
 
-| **操作**     | **Docker**          | **Containerd**                                   |
-| ------------ | ------------------- | ------------------------------------------------ |
-| **拉取镜像** | `docker pull nginx` | `ctr images pull docker.io/library/nginx:latest` |
-| **列出镜像** | `docker images`     | `crictl images` 或 `ctr images ls`               |
-| **删除镜像** | `docker rmi nginx`  | `ctr images rm docker.io/library/nginx:latest`   |
+| 操作         | Docker              | ctr                                              | crictl              | nerdctl              |
+| ------------ | ------------------- | ------------------------------------------------ | ------------------- | -------------------- |
+| **拉取镜像** | `docker pull nginx` | `ctr images pull docker.io/library/nginx:latest` | `crictl pull nginx` | `nerdctl pull nginx` |
+| **列出镜像** | `docker images`     | `ctr images ls`                                  | `crictl images`     | `nerdctl images`     |
+| **删除镜像** | `docker rmi nginx`  | `ctr images rm docker.io/library/nginx:latest`   | `crictl rmi nginx`  | `nerdctl rmi nginx`  |
 
 ### 容器管理
 
-| **操作**     | **Docker**                | **Containerd**                                    |
-| ------------ | ------------------------- | ------------------------------------------------- |
-| **运行容器** | `docker run -d nginx`     | `crictl runp` (Pod) + `crictl create` (Container) |
-| **列出容器** | `docker ps`               | `crictl ps` 或 `ctr containers ls`                |
-| **进入容器** | `docker exec -it <ID> sh` | `crictl exec -it <ID> sh`                         |
-| **停止容器** | `docker stop <ID>`        | `crictl stop <ID>`                                |
-| **查看日志** | `docker logs <ID>`        | `crictl logs <ID>`                                |
-| **删除容器** | `docker rm <ID>`          | `crictl rm <ID>`                                  |
+| 操作         | Docker                | ctr (复杂,需手动步骤)       | crictl (Pod/Container分离)      | nerdctl                |
+| ------------ | --------------------- | --------------------------- | ------------------------------- | ---------------------- |
+| **运行容器** | `docker run -d nginx` | 需先创建容器再启动（见注1） | `crictl runp` + `crictl create` | `nerdctl run -d nginx` |
+| **列出容器** | `docker ps`           | `ctr containers ls`         | `crictl ps`                     | `nerdctl ps`           |
+| **进入容器** | `docker exec -it sh`  | 不支持                      | `crictl exec -it sh`            | `nerdctl exec -it sh`  |
+| **查看日志** | `docker logs`         | 不支持                      | `crictl logs`                   | `nerdctl logs`         |
 
 ### 资源监控
 
