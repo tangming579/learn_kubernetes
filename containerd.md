@@ -54,20 +54,74 @@ Container Runtime Interface
 
 ## 配置
 
-配置文件：
+### 配置文件
 
 | **功能**       | **Docker**                | **Containerd**                |
 | -------------- | ------------------------- | ----------------------------- |
 | **主配置文件** | `/etc/docker/daemon.json` | `/etc/containerd/config.toml` |
 | **日志配置**   | 在 `daemon.json` 中调整   | 在 `config.toml` 中调整       |
 
-## 命令
+工具对比
 
 | 工具          | 开发者     | 主要用途                                                     | 适用场景                          |
 | ------------- | ---------- | ------------------------------------------------------------ | --------------------------------- |
 | **`ctr`**     | Containerd | Containerd 的**原生命令行工具**，直接操作 containerd 的底层功能。 | 调试 containerd，低级别容器操作。 |
 | **`crictl`**  | Kubernetes | 专为 Kubernetes CRI 设计的**调试工具**，命令风格类似 Docker。 | Kubernetes 节点调试，兼容 CRI。   |
 | **`nerdctl`** | containerd | 为 Containerd 设计的**用户友好型工具**，完全兼容 Docker CLI 命令格式。 | 取代 Docker CLI，开发/生产环境。  |
+
+### nerdctl
+
+#### 安装
+
+##### 1、nerdctl 安装
+
+```sh
+#因为nerdctl运行容器需要使用cni配置容器网络，所以先安装cni
+wget https://github.com/containernetworking/plugins/releases/download/v1.6.2/cni-plugins-linux-amd64-v1.6.2.tgz
+mkdir -p /opt/cni/bin
+tar xvf cni-plugins-linux-amd64-v1.6.2.tgz -C /opt/cni/bin/
+
+wget https://github.com/containerd/nerdctl/releases/download/v2.0.4/nerdctl-2.0.4-linux-amd64.tar.gz
+tar xvf nerdctl-2.0.4-linux-amd64.tar.gz
+cp nerdctl /usr/bin/
+nerdctl version
+```
+
+##### 2、nerdctl命令补全设置
+
+```
+echo "source <(nerdctl completion bash)" >/etc/profile
+source /etc/profile
+12
+```
+
+##### 3、nerdctl访问https仓库
+
+```
+nerdctl --insecure-registry login harbor-server.linux.io
+nerdctl tag ubuntu:20.04 harbor-server.linux.io/base-images/ubuntu:20.04
+nerdctl --insecure-registry push harbor-server.linux.io/base-images/ubuntu:20.04	#推送镜像测试
+```
+
+#### insecure registry
+
+参考：
+
+https://github.com/containerd/containerd/blob/main/docs/hosts.md
+
+ https://github.com/containerd/nerdctl/blob/main/docs/registry.md
+
+```sh
+mkdir -p /etc/containerd/certs.d/registry-dev.test.com
+cat > /etc/containerd/certs.d/registry-dev.test.com/hosts.toml <<EOF
+server = "http://registry-dev.test.com"
+[host."http://registry-dev.test.com"]
+  capabilities = ["pull", "resolve","push"]
+  skip_verify = true
+EOF
+```
+
+## 命令
 
 ### 镜像管理
 
